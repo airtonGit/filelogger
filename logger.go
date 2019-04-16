@@ -59,20 +59,6 @@ func Info(params ...interface{}) {
 //
 //message é inserida no arquivo de log com rotulo ERROR
 func Error(params ...interface{}) {
-	// var config struct {
-	// 	itens interface{}
-	// 	tag   string
-	// }
-	// config.itens = params
-	// config.tag = "ERROR"
-	// msgs := struct {
-	// 	tag   string
-	// 	itens interface{}
-	// }{
-	// 	"ERROR",
-	// 	params,
-	// }
-
 	logInstance.Println("ERROR", params) ///"ERROR ", params)
 }
 
