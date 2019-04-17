@@ -15,21 +15,21 @@ type logHandler struct {
 //File Logger handler
 var logInstance *logHandler
 
-// IniciaLog em arquivo.
+// StartLog em arquivo.
 //
 // Cria arquivo logger.log ou concatena ao logger.log
-func IniciaLog() {
-	IniciaLogWithTag("default-tag ")
+func StartLog() {
+	StartLogWithTag("~/logger.log", "default-tag ")
 }
 
-// IniciaLogWithTag em arquivo e tag.
+// StartLogWithTag em arquivo e tag.
 //
 // Inicia arquivo logger.log ou adiciona ao existente, permite
 // também especificar string tag padrão no arquivo
-func IniciaLogWithTag(tag string) {
+func StartLogWithTag(logfile string, tag string) {
 
 	var arquivoLog *os.File
-	arquivoLog, err := os.OpenFile("logger.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	arquivoLog, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("Nao foi possivel escrever no arquivo erro1:", err)
 	}
