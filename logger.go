@@ -60,14 +60,21 @@ func (l *Filelogger) Warning(message string) {
 //
 //Info log line "DATETIME TAG INFO"
 func (l *Filelogger) Info(params ...interface{}) {
-	l.Println("INFO ", params)
+	//l.Println("INFO ", params)
+	l.Info(params)
+}
+
+//Fatal log e finaliza
+func (l *Filelogger) Fatal(params ...interface{}) {
+	l.Fatal(params)
 }
 
 //Error adiciona nova linha no arquivo de log
 //
 //message é inserida no arquivo de log com rotulo ERROR
 func (l *Filelogger) Error(params ...interface{}) {
-	l.Println("ERROR ", params)
+	//l.Println("ERROR ", params)
+	l.Error(params)
 }
 
 //Debug adiciona nova linha no arquivo de log
@@ -75,5 +82,6 @@ func (l *Filelogger) Error(params ...interface{}) {
 //TODO: adicionar uma configuração por variavel de ambiente
 //que permite ligar/desligar
 func (l *Filelogger) Debug(params ...interface{}) {
-	l.Println("DEBUG ", params)
+	//l.Println("DEBUG ", params)
+	l.Debug(params)
 }
