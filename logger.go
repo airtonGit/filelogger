@@ -2,9 +2,32 @@ package filelogger
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 )
+
+// New em arquivo e tag.
+//
+// Inicia arquivo logger.log ou adiciona ao existente, permite
+// também especificar string tag padrão no arquivo
+func New(logfile, tag string) (*Filelogger, error) {
+	//var arquivoLog *os.File
+
+	arquivoLog, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return nil, fmt.Errorf("Nao foi possivel escrever no arquivo erro1:%s", err.Error())
+	}
+
+	mw := io.MultiWriter(os.Stdout, arquivoLog)
+
+	logInstance := &Filelogger{
+		Logger:   log.New(mw, tag, log.Ldate|log.Lmicroseconds),
+		filename: logfile,
+		tag:      tag,
+	}
+	return logInstance, nil
+}
 
 //Filelogger mantém arquivo e metodos para log
 type Filelogger struct {
@@ -22,22 +45,9 @@ func StartLog() (*Filelogger, error) {
 
 // StartLogWithTag em arquivo e tag.
 //
-// Inicia arquivo logger.log ou adiciona ao existente, permite
-// também especificar string tag padrão no arquivo
+// Proxy para New, utilize New
 func StartLogWithTag(logfile string, tag string) (*Filelogger, error) {
-
-	var arquivoLog *os.File
-	arquivoLog, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		return nil, fmt.Errorf("Nao foi possivel escrever no arquivo erro1:%s", err.Error())
-	}
-
-	logInstance := &Filelogger{
-		Logger:   log.New(arquivoLog, tag, log.Ldate|log.Lmicroseconds),
-		filename: logfile,
-		tag:      tag,
-	}
-	return logInstance, nil
+	return New(logfile, tag)
 }
 
 //Warning adiciona nova linha no arquivo de log com rotulo WARNING
@@ -57,7 +67,7 @@ func (l *Filelogger) Info(params ...interface{}) {
 //
 //message é inserida no arquivo de log com rotulo ERROR
 func (l *Filelogger) Error(params ...interface{}) {
-	l.Println("ERROR", params) ///"ERROR ", params)
+	l.Println("ERROR ", params)
 }
 
 //Debug adiciona nova linha no arquivo de log
