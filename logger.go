@@ -22,18 +22,35 @@ func New(logfile, tag string) (*Filelogger, error) {
 	mw := io.MultiWriter(os.Stdout, arquivoLog)
 
 	logInstance := &Filelogger{
-		Logger:   log.New(mw, tag, log.Ldate|log.Lmicroseconds),
-		filename: logfile,
-		tag:      tag,
+		Logger:    log.New(mw, tag, log.Ldate|log.Lmicroseconds),
+		filename:  logfile,
+		tag:       tag,
+		debugMode: false,
 	}
 	return logInstance, nil
+}
+
+//NewWithDebug Retorna log com debug ativo
+func NewWithDebug(logfile, tag string) (*Filelogger, error) {
+	log, err := New(logfile, tag)
+	if err != nil {
+		return nil, err
+	}
+	log.SetDebug(true)
+	return log, nil
+}
+
+//SetDebug configura modo debug
+func (l *Filelogger) SetDebug(mode bool) {
+	l.debugMode = mode
 }
 
 //Filelogger mantém arquivo e metodos para log
 type Filelogger struct {
 	*log.Logger
-	filename string
-	tag      string
+	filename  string
+	tag       string
+	debugMode bool
 }
 
 // StartLog em arquivo.
@@ -60,21 +77,19 @@ func (l *Filelogger) Warning(message string) {
 //
 //Info log line "DATETIME TAG INFO"
 func (l *Filelogger) Info(params ...interface{}) {
-	//l.Println("INFO ", params)
-	l.Info(params)
+	l.Println("INFO	", params)
 }
 
 //Fatal log e finaliza
 func (l *Filelogger) Fatal(params ...interface{}) {
-	l.Fatal(params)
+	l.Logger.Fatal("FATAL ", params)
 }
 
 //Error adiciona nova linha no arquivo de log
 //
 //message é inserida no arquivo de log com rotulo ERROR
 func (l *Filelogger) Error(params ...interface{}) {
-	//l.Println("ERROR ", params)
-	l.Error(params)
+	l.Println("ERROR ", params)
 }
 
 //Debug adiciona nova linha no arquivo de log
@@ -82,6 +97,7 @@ func (l *Filelogger) Error(params ...interface{}) {
 //TODO: adicionar uma configuração por variavel de ambiente
 //que permite ligar/desligar
 func (l *Filelogger) Debug(params ...interface{}) {
-	//l.Println("DEBUG ", params)
-	l.Debug(params)
+	if l.debugMode {
+		l.Println("DEBUG ", params)
+	}
 }
